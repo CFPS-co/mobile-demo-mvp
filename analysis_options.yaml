@@ -1,0 +1,21 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  exclude:
+    - lib/app/utils/translations/generated/*.dart
+    - lib/app/utils/translations/generated/intl/*.dart
+    - lib/injectable/injectable.config.dart
+    - lib/**/*.g.dart
+    - lib/**/*.gr.dart
+    - lib/**/*.freezed.dart
+    - test/**/*.mocks.dart
+    - test/generate_mocks.mocks.dart
+
+  errors:
+    invalid_annotation_target: ignore
+
+linter:
+  rules:
+    - sort_constructors_first
+    - directives_ordering
+    - avoid_relative_lib_imports

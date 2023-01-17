@@ -1,0 +1,133 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+
+// def keystoreProperties = new Properties()
+// def keystorePropertiesFile = rootProject.file('key.properties')
+// if (keystorePropertiesFile.exists()) {
+//     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+// }
+
+// def keyStoreFile = file(keystoreProperties['storeFile'])
+// def keyStorePassword = System.getenv('KEY_STORE_PASSWORD') ?: keystoreProperties['storePassword']
+// def keyStoreKeyAlias = System.getenv('UPLOAD_KEY_ALIAS') ?: keystoreProperties['keyAlias']
+// def keyStoreKeyPassword = System.getenv('UPLOAD_KEY_PASSWORD') ?: keystoreProperties['keyPassword']
+
+// if (project.gradle.startParameter.taskNames.any { it.toLowerCase().contains('release') }) {
+//     if (!keyStoreFile.exists()) throw new GradleException("Key store file " + keyStoreFile + " not found")
+//     if (keyStorePassword == null) throw new GradleException("Key store password not configured")
+//     if (keyStoreKeyAlias == null) throw new GradleException("Upload key alias not configured")
+//     if (keyStoreKeyPassword == null) throw new GradleException("Upload key password not configured")
+// }
+// TODO uncomment after adding release keys
+//def keystoreProperties = new Properties()
+//def keystorePropertiesFile = rootProject.file('key.properties')
+//if (keystorePropertiesFile.exists()) {
+//    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+//}
+//
+//def keyStoreFile = file(keystoreProperties['storeFile'])
+//def keyStorePassword = System.getenv('KEY_STORE_PASSWORD') ?: keystoreProperties['storePassword']
+//def keyStoreKeyAlias = System.getenv('UPLOAD_KEY_ALIAS') ?: keystoreProperties['keyAlias']
+//def keyStoreKeyPassword = System.getenv('UPLOAD_KEY_PASSWORD') ?: keystoreProperties['keyPassword']
+//
+//if (project.gradle.startParameter.taskNames.any { it.toLowerCase().contains('release') }) {
+//    if (!keyStoreFile.exists()) throw new GradleException("Key store file " + keyStoreFile + " not found")
+//    if (keyStorePassword == null) throw new GradleException("Key store password not configured")
+//    if (keyStoreKeyAlias == null) throw new GradleException("Upload key alias not configured")
+//    if (keyStoreKeyPassword == null) throw new GradleException("Upload key password not configured")
+//}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'kotlin-android'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+
+android {
+    compileSdkVersion 33
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        applicationId "io.cfps.app"
+        minSdkVersion 25
+        targetSdkVersion flutter.targetSdkVersion
+        multiDexEnabled true
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    flavorDimensions "app"
+    productFlavors {
+        dev {
+            dimension "app"
+            applicationIdSuffix ".dev"
+        }
+        qa {
+            dimension "app"
+            applicationIdSuffix ".qa"
+        }
+        preprodtest {
+            dimension "app"
+            applicationIdSuffix ".preprodtest"
+        }
+    }
+
+    // signingConfigs {
+//        release {
+//            keyAlias keyStoreKeyAlias
+//            keyPassword keyStorePassword
+//            storeFile keyStoreFile
+//            storePassword keyStoreKeyPassword
+//        }
+    // }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.sumsub.sns:idensic-mobile-sdk-videoident:1.22.2"
+
+}
